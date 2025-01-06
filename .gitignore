@@ -1,1 +1,135 @@
+// MainActivity.java
+package com.example.adminapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextEmployeeId, editTextFirstName, editTextLastName, editTextEmail, editTextDepartment, editTextSalary, editTextJoiningDate, editTextLeaves;
+    private Button buttonAddEmployee, buttonUpdateEmployee, buttonDeleteEmployee, buttonFetchEmployee;
+    private RequestQueue requestQueue;
+    private final String BASE_URL = "http://10.224.41.11/comp2000/employees";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Initialize UI components
+        editTextEmployeeId = findViewById(R.id.editTextEmployeeId);
+        editTextFirstName = findViewById(R.id.editTextFirstName);
+        editTextLastName = findViewById(R.id.editTextLastName);
+        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextDepartment = findViewById(R.id.editTextDepartment);
+        editTextSalary = findViewById(R.id.editTextSalary);
+        editTextJoiningDate = findViewById(R.id.editTextJoiningDate);
+        editTextLeaves = findViewById(R.id.editTextLeaves);
+        buttonAddEmployee = findViewById(R.id.buttonAddEmployee);
+        buttonUpdateEmployee = findViewById(R.id.buttonUpdateEmployee);
+        buttonDeleteEmployee = findViewById(R.id.buttonDeleteEmployee);
+        buttonFetchEmployee = findViewById(R.id.buttonFetchEmployee);
+
+        requestQueue = Volley.newRequestQueue(this);
+
+        buttonAddEmployee.setOnClickListener(v -> addEmployee());
+        buttonUpdateEmployee.setOnClickListener(v -> updateEmployee());
+        buttonDeleteEmployee.setOnClickListener(v -> deleteEmployee());
+        buttonFetchEmployee.setOnClickListener(v -> fetchEmployee());
+    }
+
+    private void addEmployee() {
+        JSONObject employeeData = new JSONObject();
+        try {
+            employeeData.put("firstname", editTextFirstName.getText().toString());
+            employeeData.put("lastname", editTextLastName.getText().toString());
+            employeeData.put("email", editTextEmail.getText().toString());
+            employeeData.put("department", editTextDepartment.getText().toString());
+            employeeData.put("salary", Double.parseDouble(editTextSalary.getText().toString()));
+            employeeData.put("joiningdate", editTextJoiningDate.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, BASE_URL + "/add", employeeData,
+                response -> Toast.makeText(MainActivity.this, "Employee added successfully!", Toast.LENGTH_SHORT).show(),
+                error -> Toast.makeText(MainActivity.this, "Failed to add employee: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+
+        requestQueue.add(request);
+    }
+
+    private void updateEmployee() {
+        String id = editTextEmployeeId.getText().toString();
+
+        JSONObject employeeData = new JSONObject();
+        try {
+            employeeData.put("firstname", editTextFirstName.getText().toString());
+            employeeData.put("lastname", editTextLastName.getText().toString());
+            employeeData.put("email", editTextEmail.getText().toString());
+            employeeData.put("department", editTextDepartment.getText().toString());
+            employeeData.put("salary", Double.parseDouble(editTextSalary.getText().toString()));
+            employeeData.put("joiningdate", editTextJoiningDate.getText().toString());
+            employeeData.put("leaves", Integer.parseInt(editTextLeaves.getText().toString()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String url = BASE_URL + "/edit/" + id;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url, employeeData,
+                response -> Toast.makeText(MainActivity.this, "Employee updated successfully!", Toast.LENGTH_SHORT).show(),
+                error -> Toast.makeText(MainActivity.this, "Failed to update employee: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+
+        requestQueue.add(request);
+    }
+
+    private void deleteEmployee() {
+        String id = editTextEmployeeId.getText().toString();
+        String url = BASE_URL + "/delete/" + id;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
+                response -> Toast.makeText(MainActivity.this, "Employee deleted successfully!", Toast.LENGTH_SHORT).show(),
+                error -> Toast.makeText(MainActivity.this, "Failed to delete employee: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+
+        requestQueue.add(request);
+    }
+
+    private void fetchEmployee() {
+        String id = editTextEmployeeId.getText().toString();
+        String url = BASE_URL + "/get/" + id;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        editTextFirstName.setText(response.getString("firstname"));
+                        editTextLastName.setText(response.getString("lastname"));
+                        editTextEmail.setText(response.getString("email"));
+                        editTextDepartment.setText(response.getString("department"));
+                        editTextSalary.setText(String.valueOf(response.getDouble("salary")));
+                        editTextJoiningDate.setText(response.getString("joiningdate"));
+                        editTextLeaves.setText(String.valueOf(response.getInt("leaves")));
+
+                        Toast.makeText(MainActivity.this, "Employee fetched successfully!", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> Toast.makeText(MainActivity.this, "Failed to fetch employee: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+
+        requestQueue.add(request);
+    }
+}
 
