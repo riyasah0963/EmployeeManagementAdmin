@@ -29,13 +29,11 @@ git clone https://github.com/riyasah0963/EmployeeManagementAdmin.git
 6 screenshorts
 
 ## Screenshots
-
-
  
+![WhatsApp Image 2025-01-06 at 19 40 46_0e5036e3](https://github.com/user-attachments/assets/867c924d-7599-425a-a296-e0d1c7621b2b)
 
-
-
-
+![WhatsApp Image 2025-01-06 at 19 40 47_ce391cb8](https://github.com/user-attachments/assets/360c46b2-8c15-40ad-99a5-0264639117b2)
+![WhatsApp Image 2025-01-06 at 19 40 46_783ab5a9](https://github.com/user-attachments/assets/2781065a-e7ca-4f45-b8a8-9f3c119f4fdd)
 
 
 7. Technologies Used
